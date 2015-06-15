@@ -29,6 +29,19 @@ my $steamid64 = pop @ARGV;
 
 my $ua = LWP::UserAgent->new();
 
+my %skin_overrides = (
+    410 => "Damascus Steel Normal",
+    411 => "Damascus Steel 90° Rotated",
+
+    415 => "Doppler Ruby",
+    416 => "Doppler Sapphire",
+    417 => "Doppler Black Pearl",
+    418 => "Doppler Phase 1",
+    419 => "Doppler Phase 2",
+    420 => "Doppler Phase 3",
+    421 => "Doppler Phase 4"
+);
+
 if (!($steamid64 =~ m/^76561[0-9]{12}$/)) {
     print "$steamid64 doesn't look like a steamid64, resolving...";
     my $request = HTTP::Request->new ("GET", "http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=$api_key&vanityurl=$steamid64");
@@ -158,7 +171,11 @@ foreach (@{${$$inventory{result}}{items}}) {
     $rarity = $$item{rarity};
     foreach (@{$$item{attributes}}) {
         my $defindex = $$_{defindex};
-        $skin = $skins{$$_{float_value}} if ($defindex == 6);
+        if ($defindex == 6) {
+            $skin = $$_{float_value};
+            if (exists $skin_overrides{$skin}) { $skin = $skin_overrides{$skin} }
+            else { $skin = $skins{$skin} };
+        }
         $wear = $$_{float_value} if ($defindex == 8);
         $stattrak = $$_{value} if ($defindex == 80);
         $name = $$_{value} if ($defindex == 111);
