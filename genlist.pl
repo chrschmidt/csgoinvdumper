@@ -213,11 +213,12 @@ foreach (@{${$$inventory{result}}{items}}) {
             $name .= ")";
         }
         $name .= " ($tournament)" if ($tournament);
-        if ($stattrak) { $sortname = 1; }
-        elsif ($tournament) { $sortname = 2; }
-        else { $sortname = 3; }
+        $sortname  = "$class";
         $sortname .= ${$items{$$item{defindex}}}{name};
         $sortname .= "$skin" if ($skin);
+        if ($stattrak > -1) { $sortname .= "1"; }
+        elsif ($tournament) { $sortname .= "2"; }
+        else { $sortname .= "3"; }
         $sortname .= $wear;
         $class = "Weapon";
     } else {
