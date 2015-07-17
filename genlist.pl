@@ -42,6 +42,8 @@ my %skin_overrides = (
     421 => "Doppler Phase 4"
 );
 
+binmode (STDOUT, ":utf8");
+
 if (!($steamid64 =~ m/^76561[0-9]{12}$/)) {
     print "$steamid64 doesn't look like a steamid64, resolving...";
     my $request = HTTP::Request->new ("GET", "http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=$api_key&vanityurl=$steamid64");
@@ -56,8 +58,6 @@ if (!($steamid64 =~ m/^76561[0-9]{12}$/)) {
     $| = 0;
     print " $steamid64\n";
 }
-
-binmode (STDOUT, ":utf8");
 
 my %locs;
 my $F = undef;
