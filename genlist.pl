@@ -42,6 +42,9 @@ my %skin_overrides = (
     421 => "Doppler Phase 4"
 );
 
+my %weapons = map {$_ => 1} ('C4', 'Grenade', 'Knife', 'Machinegun', 'Pistol',
+                             'Rifle', 'Shotgun', 'SMG', 'Sniper Rifle');
+
 binmode (STDOUT, ":utf8");
 
 if (!($steamid64 =~ m/^76561[0-9]{12}$/)) {
@@ -192,7 +195,7 @@ foreach (@{${$$inventory{result}}{items}}) {
         $musickit = $musickits{$$_{value}} if ($defindex == 166);
     }
 
-    my $is_weapon = ($wear > -1) ? 1 : 0;
+    my $is_weapon = $weapons{$class} ? 1 : 0;
 
     if ($is_weapon) {
         if ($wear >= 0.44)    { $wearname = $locs{uc "SFUI_InvTooltip_Wear_Amount_4"}; }
@@ -201,7 +204,7 @@ foreach (@{${$$inventory{result}}{items}}) {
         elsif ($wear >= 0.07) { $wearname = $locs{uc "SFUI_InvTooltip_Wear_Amount_1"}; }
         else                  { $wearname = $locs{uc "SFUI_InvTooltip_Wear_Amount_0"}; }
 
-        $name  = sprintf ("$wearname (%5.3f) ", $wear);
+        $name  = sprintf ("$wearname (%5.3f) ", $wear) if ($wear > -1);
         $name .= "StatTrak™ " if ($stattrak > -1);
         $name .= "Souvenir " if ($tournament);
         $name .= ${$items{$$item{defindex}}}{name};
