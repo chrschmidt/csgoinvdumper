@@ -50,7 +50,10 @@ if (!($steamid64 =~ m/^76561[0-9]{12}$/)) {
     die "Error " . $result->code . " (" . $result->message . ") " if ($result->code != 200);
     $result = decode_json ($result->decoded_content());
     $steamid64 = ${$$result{response}}{steamid};
+    $| = 1;
+    die "\ntranslation failed" if (!$steamid64);
     die "\ntranslation failed, $steamid64 still doesn't look like a steamid64" if (!($steamid64 =~ m/^7656119[0-9]{10}$/));
+    $| = 0;
     print " $steamid64\n";
 }
 
