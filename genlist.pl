@@ -212,7 +212,7 @@ foreach (@{${$$inventory{result}}{items}}) {
         $name .= " ($weap_rarities{$rarity} $class)";
         $name  = sprintf "%s (%d kill%s)", $name, $stattrak, $stattrak == 1 ? "" : "s" if ($stattrak > -1);
         $name .= " (renamed to $owner_name)" if ($owner_name);
-        if ($stickers[0]) {
+        if (scalar @stickers) {
             my $count = 0;
             $name .= " (stickers:";
             foreach (@stickers) { $name = sprintf "%s%s $_", $name, $count++ ? "," : "" if ($_); };
