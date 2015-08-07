@@ -197,10 +197,11 @@ my %inventory_items;
 foreach (@{${$$inventory{result}}{items}}) {
     my $item = $_;
     my @stickers;
-    my ($name, $wearname, $skin, $owner_name, $tournament, $rarity, $class, $musickit, $sortname);
+    my ($name, $wearname, $skin, $owner_name, $tournament, $rarity, $quality, $class, $musickit, $sortname);
     my ($wear, $stattrak) = (-1, -1);
     $class = ${$items{$$item{defindex}}}{class};
     $rarity = $$item{rarity};
+    $quality = $$item{quality};
     foreach (@{$$item{attributes}}) {
         my $defindex = $$_{defindex};
         if ($defindex == 6) {
@@ -253,12 +254,18 @@ foreach (@{${$$inventory{result}}{items}}) {
         else { $sortname .= "3"; }
         $sortname .= $wear;
         $class = "Weapon";
+        print "Weapon: $name\n" if ($debug);
     } else {
         $name  = ${$items{$$item{defindex}}}{name};
         $name .= " $stickers[0]" if ($stickers[0]);
         $name .= " $musickit" if ($musickit);
         $sortname = $name;
-        $name .= " ($rarities{$rarity} $class)";
+        if ($quality == 7) {
+            $name = "Prototype $name  (Prototype $rarities{$rarity} $class)";
+        } else {
+            $name .= " ($rarities{$rarity} $class)";
+        }
+        print "Non-weapon: $name\n" if ($debug);
     }
     $name =~ s/\s+/ /g;
 
