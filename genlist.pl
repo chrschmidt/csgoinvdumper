@@ -8,6 +8,7 @@ use LWP::UserAgent;
 # Install JSON::XS for this
 use JSON;
 use utf8;
+use Data::Dumper;
 
 # The name of the file containing the localization, e.g. the displayed named.
 # Found in SteamLibrary/steamapps/common/Counter-Strike Global Offensive/csgo/resource/
@@ -23,6 +24,8 @@ my $api_key         = "<your key here>";
 my $max_retry_count = 1000;
 # But there's no point in hammering and increasing the problem
 my $retry_delay     = 5;
+# Extra Output
+my $debug           = 0;
 
 die "Usage: $0 steamid64\n" unless (@ARGV == 1);
 my $steamid64 = pop @ARGV;
@@ -123,25 +126,6 @@ foreach (keys %$tmp) {
     $weap_rarities{@{$$item{value}}[0]} = $weap_rarities{$_};
 }
 
-$tmp = ${$$storage{items_game}}{items};
-foreach (keys %$tmp) {
-    my $item = $$tmp{$_};
-    next if (exists $$item{hidden});
-    my $prefab = ${${$$storage{items_game}}{prefabs}}{@{$$item{prefab}}[0] =~ s/^valve //r};
-    my $name;
-    my $class;
-    if (exists $$item{item_name}) { $name = @{$$item{item_name}}[0]; }
-    elsif (exists $$prefab{item_name}) { $name = @{$$prefab{item_name}}[0]; }
-    else { die "Nothing found for $_ @{$$item{name}}[0]"; }
-    do {
-        if (exists $$item{item_type_name}) { $class = @{$$item{item_type_name}}[0]; }
-        elsif (exists $$prefab{item_type_name}) { $class = @{$$prefab{item_type_name}}[0]; }
-        elsif (exists $$prefab{prefab}) { $prefab = ${${$$storage{items_game}}{prefabs}}{@{$$prefab{prefab}}[0]}; }
-        else { die "No class found for $_ $name"; }
-    } while (!$class);
-    $items{$_} = { name => $locs{uc $name =~ s/^#//r}, class => $locs{uc $class =~ s/^#//r} };
-}
-
 $tmp = ${$$storage{items_game}}{paint_kits};
 foreach (keys %$tmp) {
     $skins{$_} = $locs{uc $$tmp{$_}{description_tag}[0] =~ s/^#//r}
@@ -149,8 +133,48 @@ foreach (keys %$tmp) {
 }
 $tmp = ${$$storage{items_game}}{music_definitions};
 $musickits{$_} = $locs{uc $$tmp{$_}{loc_name}[0] =~ s/^#//r} foreach (keys %$tmp);
+$musickits{$$tmp{$_}{name}[0]} = $locs{uc $$tmp{$_}{loc_name}[0] =~ s/^#//r} foreach (keys %$tmp);
 $tmp = ${$$storage{items_game}}{sticker_kits};
 $stickers{$_} = $locs{uc $$tmp{$_}{item_name}[0] =~ s/^#//r} foreach (keys %$tmp);
+$stickers{$$tmp{$_}{name}[0]} = $locs{uc $$tmp{$_}{item_name}[0] =~ s/^#//r} foreach (keys %$tmp);
+
+sub get_name {
+    my ($item) = @_;
+    my $prefab = ${${$$storage{items_game}}{prefabs}}{@{$$item{prefab}}[0] =~ s/^valve //r};
+    if (exists $$item{item_name}) { return @{$$item{item_name}}[0]; }
+    elsif (exists $$prefab{item_name}) { return @{$$prefab{item_name}}[0]; }
+    else { die "Nothing found for $_ @{$$item{name}}[0]"; }
+}
+
+$tmp = ${$$storage{items_game}}{items};
+foreach (keys %$tmp) {
+    my $item = $$tmp{$_};
+    next if (exists $$item{hidden});
+    my $prefab = ${${$$storage{items_game}}{prefabs}}{@{$$item{prefab}}[0] =~ s/^valve //r};
+    my $name = get_name ($item);
+    my $class;
+    do {
+        if (exists $$item{item_type_name}) { $class = @{$$item{item_type_name}}[0]; }
+        elsif (exists $$prefab{item_type_name}) { $class = @{$$prefab{item_type_name}}[0]; }
+        elsif (exists $$prefab{prefab}) { $prefab = ${${$$storage{items_game}}{prefabs}}{@{$$prefab{prefab}}[0]}; }
+        else { die "No class found for $_ $name"; }
+    } while (!$class);
+    $name = $locs{uc $name =~ s/^#//r};
+    if ($$item{loot_list_name}) {
+        my $lootlist = ${$$storage{items_game}}{client_loot_lists}{$$item{loot_list_name}[0]};
+        if ($$lootlist{public_list_contents}) {
+            my ($iname, $content);
+            foreach (keys %$lootlist) { $content = $_ if ($_ ne "public_list_contents") };
+            ($iname, $content) = ($1, $2) if ($content =~ m/\[([^]]+)\](.+)/);
+            foreach (keys %$tmp) {
+                $name = "$name | " . $locs{uc get_name ($$tmp{$_}) =~ s/^#//r} if ($$tmp{$_}{name}[0] eq $content);
+            }
+            if ($content eq "sticker") { $name = "$name | $stickers{$iname}" }
+            elsif ($content eq "musickit") { $name = "$name | $musickits{$iname}" }
+        }
+    }
+    $items{$_} = { name => $name, class => $locs{uc $class =~ s/^#//r} };
+}
 
 my $request = HTTP::Request->new ("GET", "http://api.steampowered.com/IEconItems_730/GetPlayerItems/v0001/?key=$api_key&SteamID=$steamid64");
 $request->header ('Accept-Encoding' => scalar HTTP::Message::decodable(), 'Accept' => 'application/json');
@@ -165,6 +189,8 @@ do {
     }
 } while ($result->code != 200);
 my $inventory = decode_json ($result->decoded_content());
+
+print Dumper $result->decoded_content() if ($debug);
 
 my %inventory_items;
 
