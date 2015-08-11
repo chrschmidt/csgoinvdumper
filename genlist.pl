@@ -116,7 +116,7 @@ while (<$F>) {
 close ($F);
 
 # Extract recurring information for later use: rarities, items, skins ("paint kits"), music kits, stickers
-my (%items, %skins, %musickits, %stickers, %rarities, %weap_rarities);
+my (%items, %skins, %musickits, %stickers, %rarities, %qualities, %weap_rarities);
 my $tmp = ${$$storage{items_game}}{rarities};
 foreach (keys %$tmp) {
     my $item = $$tmp{$_};
@@ -125,6 +125,8 @@ foreach (keys %$tmp) {
     $weap_rarities{$_} = $locs{uc @{$$item{loc_key_weapon}}[0]};
     $weap_rarities{@{$$item{value}}[0]} = $weap_rarities{$_};
 }
+$tmp = ${$$storage{items_game}}{qualities};
+$qualities{$$tmp{$_}{value}[0]} = $locs{uc $_} foreach (keys %$tmp);
 
 $tmp = ${$$storage{items_game}}{paint_kits};
 foreach (keys %$tmp) {
@@ -232,8 +234,8 @@ foreach (@{${$$inventory{result}}{items}}) {
         else                  { $wearname = $locs{uc "SFUI_InvTooltip_Wear_Amount_0"}; }
 
         $name  = sprintf ("$wearname (%5.3f) ", $wear) if ($wear > -1);
-        $name .= "StatTrak™ " if ($stattrak > -1);
-        $name .= "Souvenir " if ($tournament);
+        # 4 = unique
+        $name .= "$qualities{$quality} " if ($quality != 4);
         $name .= ${$items{$$item{defindex}}}{name};
         $name .= " | $skin" if ($skin);
         $name .= " ($weap_rarities{$rarity} $class)";
@@ -260,8 +262,9 @@ foreach (@{${$$inventory{result}}{items}}) {
         $name .= " $stickers[0]" if ($stickers[0]);
         $name .= " $musickit" if ($musickit);
         $sortname = $name;
-        if ($quality == 7) {
-            $name = "Prototype $name  (Prototype $rarities{$rarity} $class)";
+        # 4 = unique
+        if ($quality != 4) {
+            $name = "$qualities{$quality} $name ($qualities{$quality} $rarities{$rarity} $class)";
         } else {
             $name .= " ($rarities{$rarity} $class)";
         }
