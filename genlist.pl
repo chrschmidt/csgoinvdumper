@@ -12,8 +12,6 @@ use Data::Dumper;
 
 # The name of the file containing the localization, e.g. the displayed named.
 # Found in SteamLibrary/steamapps/common/Counter-Strike Global Offensive/csgo/resource/
-# If you choose a different localization than English, you might want to change some fixed
-# strings in name building near the end of the program.
 my $localization_fn = "csgo_english.txt";
 # The CS:GO item list to translate numbers from the inventory into strings.
 # Found in SteamLibrary/steamapps/common/Counter-Strike Global Offensive/csgo/scripts/items/
