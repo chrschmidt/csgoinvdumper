@@ -234,6 +234,8 @@ foreach (@{${$$inventory{result}}{items}}) {
         $name  = sprintf ("$wearname (%5.3f) ", $wear) if ($wear > -1);
         # 4 = unique
         $name .= "$qualities{$quality} " if ($quality != 4);
+        # Add StatTrak for knives
+        $name .= "StatTrak™ " if ($stattrak > -1 && $quality == 3);
         $name .= ${$items{$$item{defindex}}}{name};
         $name .= " | $skin" if ($skin);
         $name .= " ($weap_rarities{$rarity} $class)";
@@ -254,7 +256,6 @@ foreach (@{${$$inventory{result}}{items}}) {
         else { $sortname .= "3"; }
         $sortname .= $wear;
         $class = "Weapon";
-        print "Weapon: $name\n" if ($debug);
     } else {
         $name  = ${$items{$$item{defindex}}}{name};
         $name .= " $stickers[0]" if ($stickers[0]);
@@ -266,7 +267,6 @@ foreach (@{${$$inventory{result}}{items}}) {
         } else {
             $name .= " ($rarities{$rarity} $class)";
         }
-        print "Non-weapon: $name\n" if ($debug);
     }
     $name =~ s/\s+/ /g;
 
