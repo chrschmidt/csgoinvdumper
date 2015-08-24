@@ -235,7 +235,7 @@ foreach (@{${$$inventory{result}}{items}}) {
         # 4 = unique
         $name .= "$qualities{$quality} " if ($quality != 4);
         # Add StatTrak for knives
-        $name .= "StatTrak™ " if ($stattrak > -1 && $quality == 3);
+        $name .= $locs{uc "strange"} . " " if ($stattrak > -1 && $quality == 3);
         $name .= ${$items{$$item{defindex}}}{name};
         $name .= " | $skin" if ($skin);
         $name .= " ($weap_rarities{$rarity} $class)";
