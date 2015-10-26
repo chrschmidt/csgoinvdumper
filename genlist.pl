@@ -267,6 +267,7 @@ foreach (@{${$$inventory{result}}{items}}) {
         } else {
             $name .= " ($rarities{$rarity} $class)";
         }
+        $name .= " ($stattrak MVPs)" if ($stattrak > -1 && $musickit);
     }
     $name =~ s/\s+/ /g;
 
