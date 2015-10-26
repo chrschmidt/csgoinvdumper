@@ -68,7 +68,7 @@ my $F = undef;
 open ($F, "<:encoding(UTF-16)", $localization_fn) or die "$!";
 while (<$F>) {
     $locs{uc $1} = $2
-        if ($_ =~ m/^\s*"([^"]+)"\s+"([^"]+)"\s*$/);
+        if ($_ =~ m/^\s*"([^"]+)"\s*"([^"]+)"\s*$/);
 }
 close ($F);
 
