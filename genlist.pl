@@ -247,7 +247,7 @@ foreach (@{${$$inventory{result}}{items}}) {
             foreach (@stickers) { $name = sprintf "%s%s $_", $name, $count++ ? "," : "" if ($_); };
             $name .= ")";
         }
-        $name .= " ($tournament)" if ($tournament);
+        $owner_name .= " ($tournament)" if ($tournament);
         $sortname  = "$class";
         $sortname .= ${$items{$$item{defindex}}}{name};
         $sortname .= "$skin" if ($skin);
