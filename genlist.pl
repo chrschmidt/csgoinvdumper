@@ -211,7 +211,7 @@ foreach (@{${$$inventory{result}}{items}}) {
         }
         $wear = $$_{float_value} if ($defindex == 8);
         $stattrak = $$_{value} if ($defindex == 80);
-        $name = $$_{value} if ($defindex == 111);
+        $owner_name = $$_{value} if ($defindex == 111);
         $stickers[0] = $stickers{$$_{value}} if ($defindex == 113);
         $stickers[1] = $stickers{$$_{value}} if ($defindex == 117);
         $stickers[2] = $stickers{$$_{value}} if ($defindex == 121);
@@ -247,7 +247,7 @@ foreach (@{${$$inventory{result}}{items}}) {
             foreach (@stickers) { $name = sprintf "%s%s $_", $name, $count++ ? "," : "" if ($_); };
             $name .= ")";
         }
-        $owner_name .= " ($tournament)" if ($tournament);
+        $name .= " ($tournament)" if ($tournament);
         $sortname  = "$class";
         $sortname .= ${$items{$$item{defindex}}}{name};
         $sortname .= "$skin" if ($skin);
