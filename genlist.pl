@@ -232,7 +232,7 @@ foreach (@{${$$inventory{result}}{items}}) {
         elsif ($wear >= 0.07) { $wearname = $locs{uc "SFUI_InvTooltip_Wear_Amount_1"}; }
         else                  { $wearname = $locs{uc "SFUI_InvTooltip_Wear_Amount_0"}; }
 
-        $name  = sprintf ("$wearname (%5.3f) ", $wear) if ($wear > -1);
+        $name  = sprintf ("$wearname (%6.4f) ", $wear) if ($wear > -1);
         # 4 = unique
         $name .= "$qualities{$quality} " if ($quality != 4);
         # Add StatTrak for knives
