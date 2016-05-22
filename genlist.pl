@@ -143,6 +143,7 @@ sub get_name {
     my $prefab = ${${$$storage{items_game}}{prefabs}}{@{$$item{prefab}}[0] =~ s/^valve //r};
     if (exists $$item{item_name}) { return @{$$item{item_name}}[0]; }
     elsif (exists $$prefab{item_name}) { return @{$$prefab{item_name}}[0]; }
+    elsif (exists $$item{name}) { return @{$$item{name}}[0]; } # apparently happens with yet unused things
     else { die "Nothing found for $_ @{$$item{name}}[0]"; }
 }
 
