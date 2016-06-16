@@ -41,6 +41,12 @@ my %skin_overrides = (
     419 => "Doppler Phase 2",
     420 => "Doppler Phase 3",
     421 => "Doppler Phase 4"
+
+    568 => "Doppler Emerald",
+    569 => "Gamma Doppler Phase 1",
+    570 => "Gamma Doppler Phase 2",
+    571 => "Gamma Doppler Phase 3",
+    572 => "Gamma Doppler Phase 4"
 );
 
 my %weapons = map {$_ => 1} ('C4', 'Grenade', 'Knife', 'Machinegun', 'Pistol',
